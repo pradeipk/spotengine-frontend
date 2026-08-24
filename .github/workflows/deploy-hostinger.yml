@@ -1,0 +1,41 @@
+name: Deploy Frontend to Hostinger
+
+on:
+  push:
+    branches:
+      - main # Triggers deployment when you push to the main branch
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🚚 Checkout Code
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🛠️ Build Static Export
+        run: npm run build
+        env:
+          # Ensure Next.js API calls point to your production backend URL
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+
+      - name: 🚀 Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # The directory where the Next.js static files are generated
+          local-dir: ./out/
+          # The remote directory on Hostinger (usually public_html)
+          server-dir: /public_html/
