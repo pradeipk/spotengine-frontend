@@ -98,7 +98,7 @@ export default function SearchResults() {
                 ))}
               </div>
 
-              <Link href={`/engineer/${engineer.id}`} style={{ width: '100%' }}>
+              <Link href={`/engineer?id=${engineer.id}`} style={{ width: '100%' }}>
                 <Button fullWidth>View Profile & Book</Button>
               </Link>
             </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -24,9 +24,8 @@ interface EngineerInfo {
 
 export default function BookingCheckout() {
   const router = useRouter();
-  const params = useParams();
   const searchParams = useSearchParams();
-  const engineerId = params.engineerId as string;
+  const engineerId = searchParams.get('engineerId');
   const rateCardId = searchParams.get('rateCardId');
 
   const { user } = useAuthStore();

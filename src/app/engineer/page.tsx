@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import styles from './profile.module.css';
@@ -20,9 +20,9 @@ interface EngineerDetail {
 }
 
 export default function EngineerProfilePage() {
-  const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const id = params.id as string;
+  const id = searchParams.get('id');
 
   const [engineer, setEngineer] = useState<EngineerDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -130,7 +130,7 @@ export default function EngineerProfilePage() {
                     <p className={styles.rateDesc}>{rate.description}</p>
                     <Button 
                       fullWidth 
-                      onClick={() => router.push(`/booking/${engineer.id}?rateCardId=${rate.id}`)}
+                      onClick={() => router.push(`/booking?engineerId=${engineer.id}&rateCardId=${rate.id}`)}
                     >
                       Book Service
                     </Button>
