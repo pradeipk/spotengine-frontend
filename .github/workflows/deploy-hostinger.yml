@@ -29,13 +29,15 @@ jobs:
           # Ensure Next.js API calls point to your production backend URL
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
-      - name: 🚀 Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: 🚀 Deploy to Hostinger via SSH
+        uses: appleboy/scp-action@v0.1.7
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          # The directory where the Next.js static files are generated
-          local-dir: ./out/
-          # The remote directory on Hostinger (usually public_html)
-          server-dir: /public_html/
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Source directory to copy from
+          source: "out/*"
+          # Target directory on the server (usually public_html relative to your SSH home directory)
+          target: "public_html/"
+          # Strip the 'out/' folder name so files go directly into public_html
+          strip_components: 1
