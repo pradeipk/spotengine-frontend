@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -19,7 +19,7 @@ interface EngineerDetail {
   rateCards: { id: string; serviceType: string; hourlyRate: string; description: string }[];
 }
 
-export default function EngineerProfilePage() {
+function EngineerProfileContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const id = searchParams.get('id');
@@ -144,5 +144,13 @@ export default function EngineerProfilePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function EngineerProfilePage() {
+  return (
+    <Suspense fallback={<div className={styles.loadingState}>Loading profile...</div>}>
+      <EngineerProfileContent />
+    </Suspense>
   );
 }

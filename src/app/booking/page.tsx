@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
@@ -22,7 +22,7 @@ interface EngineerInfo {
   };
 }
 
-export default function BookingCheckout() {
+function BookingCheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const engineerId = searchParams.get('engineerId');
@@ -180,5 +180,13 @@ export default function BookingCheckout() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BookingCheckout() {
+  return (
+    <Suspense fallback={<div className={styles.loadingState}>Loading booking...</div>}>
+      <BookingCheckoutContent />
+    </Suspense>
   );
 }

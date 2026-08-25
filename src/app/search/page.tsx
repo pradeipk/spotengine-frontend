@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
@@ -17,7 +17,7 @@ interface Engineer {
   skills: { skill: { name: string } }[];
 }
 
-export default function SearchResults() {
+function SearchResultsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -113,5 +113,13 @@ export default function SearchResults() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SearchResults() {
+  return (
+    <Suspense fallback={<div className={styles.loadingState}>Searching...</div>}>
+      <SearchResultsContent />
+    </Suspense>
   );
 }
