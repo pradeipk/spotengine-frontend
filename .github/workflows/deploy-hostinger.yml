@@ -35,6 +35,7 @@ jobs:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 65002 }} # Matches Hostinger SSH details
           # Source directory to copy from
           source: "out/*"
           # Target directory on the server (usually public_html relative to your SSH home directory)
