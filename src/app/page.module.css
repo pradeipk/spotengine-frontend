@@ -1,52 +1,36 @@
-.container {
+.main {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   position: relative;
   overflow: hidden;
 }
 
-/* Background Gradients */
-.container::before {
-  content: '';
-  position: absolute;
-  top: -20%;
-  left: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(circle, rgba(102,252,241,0.15) 0%, rgba(11,12,16,0) 70%);
-  z-index: -1;
-}
-
-.container::after {
-  content: '';
-  position: absolute;
-  bottom: -20%;
-  right: -10%;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(circle, rgba(69,162,158,0.1) 0%, rgba(11,12,16,0) 70%);
-  z-index: -1;
-}
-
-/* Navbar */
+/* Navigation */
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--space-md) var(--space-2xl);
-  margin: var(--space-md);
-  position: sticky;
-  top: var(--space-md);
+  padding: var(--space-md) var(--space-xl);
   z-index: 100;
+  border-radius: 0;
+  border-top: none;
+  border-left: none;
+  border-right: none;
 }
 
 .logo {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.5px;
+}
+
+.accent {
+  color: var(--accent-primary);
 }
 
 .navLinks {
@@ -55,86 +39,141 @@
   gap: var(--space-lg);
 }
 
-.navLink {
+.link {
+  color: var(--text-secondary);
   font-weight: 500;
   transition: color 0.2s;
 }
 
-.navLink:hover {
-  color: var(--accent-primary);
-}
-
-.navButton {
-  background: var(--accent-primary);
-  color: var(--bg-primary);
-  padding: 0.6rem 1.2rem;
-  border-radius: var(--radius-full);
-  font-weight: 600;
+.link:hover {
+  color: var(--text-primary);
 }
 
 /* Hero Section */
 .hero {
-  flex: 1;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  padding: var(--space-xl);
+  position: relative;
+  z-index: 10;
+}
+
+.heroContent {
   text-align: center;
-  padding: 0 var(--space-md);
+  max-width: 900px;
+  width: 100%;
 }
 
 .title {
-  font-size: 4.5rem;
+  font-size: clamp(3rem, 5vw, 4.5rem);
   line-height: 1.1;
-  letter-spacing: -1.5px;
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
+  letter-spacing: -1px;
 }
 
-.highlight {
-  color: var(--accent-primary);
-  text-shadow: 0 0 20px rgba(102, 252, 241, 0.3);
+.gradientText {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .subtitle {
   font-size: 1.25rem;
+  color: var(--text-secondary);
   max-width: 600px;
-  margin-bottom: var(--space-2xl);
+  margin: 0 auto var(--space-2xl);
+  line-height: 1.6;
 }
 
 /* Search Box */
 .searchBox {
   display: flex;
-  width: 100%;
-  max-width: 600px;
-  background: var(--bg-glass);
-  border: 1px solid rgba(102, 252, 241, 0.2);
-  border-radius: var(--radius-full);
-  padding: 0.5rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin: 0 auto;
+  max-width: 800px;
 }
 
-.searchInput {
+@media (min-width: 768px) {
+  .searchBox {
+    flex-direction: row;
+    align-items: center;
+    padding: var(--space-md);
+  }
+}
+
+.searchInputGroup {
   flex: 1;
-  background: transparent;
-  border: none;
-  color: var(--text-primary);
-  padding: 0 var(--space-lg);
-  font-size: 1rem;
-  font-family: var(--font-sans);
-  outline: none;
 }
 
-.searchInput::placeholder {
+/* Hide the label for a cleaner look in the search bar */
+.searchInputGroup > div > label {
+  display: none;
+}
+
+.locateBtn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.locateBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.locatedBtn {
+  background: rgba(102, 252, 241, 0.1);
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  white-space: nowrap;
 }
 
 .searchBtn {
+  white-space: nowrap;
+  font-size: 1.1rem;
+  padding: 0 var(--space-xl);
+}
+
+/* Decorative Orbs */
+.orb1, .orb2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 1;
+  opacity: 0.4;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.orb1 {
+  top: 10%;
+  left: -10%;
+  width: 40vw;
+  height: 40vw;
   background: var(--accent-primary);
-  color: var(--bg-primary);
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: var(--radius-full);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
+  animation-delay: -2s;
+}
+
+.orb2 {
+  bottom: -20%;
+  right: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: var(--accent-secondary);
+}
+
+@keyframes float {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(5%, 5%) scale(1.1);
+  }
 }
