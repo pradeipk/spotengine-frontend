@@ -27,7 +27,7 @@ interface Booking {
 
 export default function CustomerDashboard() {
   const router = useRouter();
-  const { user, clearTokens, clearUser } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -57,8 +57,7 @@ export default function CustomerDashboard() {
   }, [user, router]);
 
   const handleLogout = () => {
-    clearTokens();
-    clearUser();
+    logout();
     router.push('/login');
   };
 
@@ -69,7 +68,7 @@ export default function CustomerDashboard() {
       <header className={`${styles.header} glass-panel`}>
         <div className={styles.headerContent}>
           <div>
-            <h1>Welcome, {user?.name}</h1>
+            <h1>Welcome, {user?.email}</h1>
             <p>Manage your service requests and bookings.</p>
           </div>
           <div className={styles.headerActions}>
