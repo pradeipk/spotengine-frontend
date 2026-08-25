@@ -38,7 +38,7 @@ jobs:
           port: ${{ secrets.SSH_PORT || 65002 }} # Matches Hostinger SSH details
           # Source directory to copy from
           source: "out/*"
-          # Target directory on the server (usually public_html relative to your SSH home directory)
-          target: "public_html/"
+          # Target directory on the server (Hostinger structure: domains/yourdomain.com/public_html/)
+          target: "domains/lime-lapwing-861335.hostingersite.com/public_html/"
           # Strip the 'out/' folder name so files go directly into public_html
           strip_components: 1
