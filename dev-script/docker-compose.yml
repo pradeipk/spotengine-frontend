@@ -6,9 +6,9 @@ services:
     container_name: spotengine-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: u895854558_spotengine
-      MYSQL_USER: u895854558_spotengine
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: spotengine
+      MYSQL_USER: spotengine
       MYSQL_PASSWORD: Spotengine@484774
     ports:
       - "3306:3306"
