@@ -34,18 +34,26 @@ export default function RegisterPage() {
         role 
       });
       
-      const { user, backendTokens } = response.data;
+      const payload = response.data?.data || response.data;
+      const user = payload.user || payload;
+      const accessToken = payload.accessToken || payload.backendTokens?.accessToken || payload.token;
+      const refreshToken = payload.refreshToken || payload.backendTokens?.refreshToken;
       
-      setTokens(backendTokens.accessToken, backendTokens.refreshToken);
-      setUser(user);
+      if (accessToken && refreshToken) {
+        setTokens(accessToken, refreshToken);
+      }
+      if (user) {
+        setUser(user);
+      }
 
-      if (user.role === 'customer') {
-        router.push('/dashboard/customer');
+      if (user?.role === 'engineer') {
+        router.push('/dashboard/engineer/profile');
       } else {
-        router.push('/dashboard/engineer/profile'); // Force engineers to setup profile
+        router.push('/dashboard/customer');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      const msg = err.response?.data?.message || err.message || 'Registration failed. Please try again.';
+      setError(Array.isArray(msg) ? msg.join(', ') : msg);
     } finally {
       setIsLoading(false);
     }

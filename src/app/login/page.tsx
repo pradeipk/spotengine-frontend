@@ -27,21 +27,29 @@ export default function LoginPage() {
     try {
       const response = await api.post('/auth/login', { email, password });
       
-      const { user, backendTokens } = response.data;
+      const payload = response.data?.data || response.data;
+      const user = payload.user || payload;
+      const accessToken = payload.accessToken || payload.backendTokens?.accessToken || payload.token;
+      const refreshToken = payload.refreshToken || payload.backendTokens?.refreshToken;
       
-      setTokens(backendTokens.accessToken, backendTokens.refreshToken);
-      setUser(user);
+      if (accessToken && refreshToken) {
+        setTokens(accessToken, refreshToken);
+      }
+      if (user) {
+        setUser(user);
+      }
 
       // Redirect based on role
-      if (user.role === 'customer') {
+      if (user?.role === 'customer') {
         router.push('/dashboard/customer');
-      } else if (user.role === 'engineer') {
+      } else if (user?.role === 'engineer') {
         router.push('/dashboard/engineer');
       } else {
         router.push('/dashboard/admin');
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+      const msg = err.response?.data?.message || err.message || 'Login failed. Please check your credentials.';
+      setError(Array.isArray(msg) ? msg.join(', ') : msg);
     } finally {
       setIsLoading(false);
     }
