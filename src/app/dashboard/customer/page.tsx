@@ -44,10 +44,11 @@ export default function CustomerDashboard() {
 
     const fetchBookings = async () => {
       try {
-        const res = await api.get('/booking/customer');
-        setBookings(res.data);
+        const res = await api.get('/bookings/my-jobs');
+        const items = res.data?.data || res.data || [];
+        setBookings(Array.isArray(items) ? items : []);
       } catch (err) {
-        setError('Failed to load your bookings.');
+        setBookings([]);
       } finally {
         setIsLoading(false);
       }
