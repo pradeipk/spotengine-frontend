@@ -60,7 +60,9 @@ export default function Home() {
     <div className={styles.main}>
       {/* Navbar */}
       <nav className={`${styles.navbar} glass-panel`}>
-        <div className={styles.logo}>SpotEngine<span className={styles.accent}>.</span></div>
+        <div className={styles.logo}>
+          Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
+        </div>
         <div className={styles.navLinks}>
           <Link href="/login" className={styles.link}>Sign In</Link>
           <Link href="/register">
