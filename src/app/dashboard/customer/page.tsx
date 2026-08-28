@@ -46,8 +46,12 @@ export default function CustomerDashboard() {
       try {
         const res = await api.get('/bookings/my-jobs');
         const items = res.data?.data || res.data || [];
+        setBookings(Array.isArray(items) ? items : []);
+      } catch (err) {
+        setBookings([]);
       } finally {
         setIsLoading(false);
+      }
     };
 
     fetchBookings();
