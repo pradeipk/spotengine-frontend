@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { GoogleButton } from '@/components/ui/GoogleButton';
 import styles from './login.module.css';
 
 export default function LoginPage() {
@@ -89,6 +90,12 @@ export default function LoginPage() {
             Sign In
           </Button>
         </form>
+
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
+
+        <GoogleButton text="Sign in with Google" />
 
         <div className={styles.footer}>
           Don't have an account? <Link href="/register">Sign up</Link>
