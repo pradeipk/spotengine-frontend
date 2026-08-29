@@ -185,7 +185,11 @@ export default function AdminDashboardPage() {
             <p>Welcome back, <strong>{user?.email}</strong>. Manage regional tenants, engineers & revenue.</p>
           </div>
           <div className={styles.headerActions}>
-            <a href="http://localhost:3001/api/docs" target="_blank" rel="noreferrer">
+            <a 
+              href={(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '/api/docs')} 
+              target="_blank" 
+              rel="noreferrer"
+            >
               <Button variant="outline">📚 Swagger Docs</Button>
             </a>
             <Button variant="outline" onClick={fetchData}>🔄 Refresh</Button>

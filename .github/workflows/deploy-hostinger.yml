@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 65002 }}
-          source: "out/*"
+          source: "out/*,out/.htaccess"
           target: "public_html/"
           strip_components: 1
 
@@ -48,6 +48,6 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 65002 }}
-          source: "out/*"
+          source: "out/*,out/.htaccess"
           target: "domains/spotengineer.in/public_html/"
           strip_components: 1
