@@ -29,16 +29,25 @@ jobs:
           # Ensure Next.js API calls point to your production backend URL
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
-      - name: 🚀 Deploy to Hostinger via SSH
+      - name: 🚀 Deploy to Hostinger (public_html)
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 65002 }} # Matches Hostinger SSH details
-          # Source directory to copy from
+          port: ${{ secrets.SSH_PORT || 65002 }}
           source: "out/*"
-          # Target directory on the server (Hostinger structure: domains/yourdomain.com/public_html/)
-          target: "domains/peru-wallaby-352953.hostingersite.com/public_html/"
-          # Strip the 'out/' folder name so files go directly into public_html
+          target: "public_html/"
+          strip_components: 1
+
+      - name: 🚀 Deploy to Hostinger (domains/spotengineer.in/public_html)
+        uses: appleboy/scp-action@v0.1.7
+        continue-on-error: true
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 65002 }}
+          source: "out/*"
+          target: "domains/spotengineer.in/public_html/"
           strip_components: 1
