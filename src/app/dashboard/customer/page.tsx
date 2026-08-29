@@ -27,7 +27,7 @@ interface Booking {
 
 export default function CustomerDashboard() {
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, logout, setUser } = useAuthStore();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -57,6 +57,16 @@ export default function CustomerDashboard() {
     fetchBookings();
   }, [user, router]);
 
+  const handleSwitchToEngineer = async () => {
+    try {
+      await api.patch('/users/role', { role: 'engineer' });
+      if (user) setUser({ ...user, role: 'engineer' });
+      router.push('/dashboard/engineer');
+    } catch (err) {
+      router.push('/dashboard/engineer');
+    }
+  };
+
   const handleLogout = () => {
     logout();
     router.push('/login');
@@ -73,6 +83,7 @@ export default function CustomerDashboard() {
             <p>Manage your service requests and bookings.</p>
           </div>
           <div className={styles.headerActions}>
+            <Button onClick={handleSwitchToEngineer} variant="outline">🛠️ Engineer Mode</Button>
             <Button onClick={() => router.push('/')} variant="outline">Book New Service</Button>
             <Button onClick={handleLogout} variant="outline">Logout</Button>
           </div>
