@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { GoogleButton } from '@/components/ui/GoogleButton';
 import styles from './register.module.css';
 
 export default function RegisterPage() {
@@ -119,6 +120,12 @@ export default function RegisterPage() {
             Create Account
           </Button>
         </form>
+
+        <div className={styles.divider}>
+          <span>or</span>
+        </div>
+
+        <GoogleButton text="Sign up with Google" />
 
         <div className={styles.footer}>
           Already have an account? <Link href="/login">Sign in</Link>
