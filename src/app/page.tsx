@@ -75,7 +75,7 @@ export default function Home() {
       <section className={styles.hero}>
         <div className={`${styles.heroContent} animate-slide-up`}>
           <h1 className={styles.title}>
-            On-Demand IT Services &<br />
+            On-Demand IT Services & {' '}
             <span className={styles.gradientText}>Engineering Marketplace</span>
           </h1>
           <p className={styles.subtitle}>
@@ -86,7 +86,7 @@ export default function Home() {
             <div className={styles.searchInputGroup}>
               <Input
                 label=""
-                placeholder="What service do you need? (e.g. Server Setup, Networking)"
+                placeholder="Search service (e.g. Networking)"
                 value={skill}
                 onChange={(e) => setSkill(e.target.value)}
                 fullWidth

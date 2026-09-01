@@ -20,7 +20,10 @@
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0;
+  padding: 10px 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   margin-bottom: var(--space-md);
   font-size: 0.9rem;
   transition: color 0.2s;
@@ -41,7 +44,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
   gap: var(--space-xl);
   max-width: 1200px;
   margin: 0 auto;
@@ -123,3 +126,24 @@
   margin-bottom: var(--space-lg);
   font-size: 1.1rem;
 }
+
+@media (max-width: 480px) {
+  .header {
+    padding: var(--space-md) var(--space-sm);
+    margin-bottom: var(--space-lg);
+  }
+  
+  .headerContent h1 {
+    font-size: 1.5rem;
+  }
+  
+  .grid {
+    gap: var(--space-md);
+    padding: 0 var(--space-sm);
+  }
+  
+  .card {
+    padding: var(--space-md);
+  }
+}
+

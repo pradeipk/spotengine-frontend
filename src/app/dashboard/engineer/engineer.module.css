@@ -59,7 +59,7 @@
 /* KPI Cards */
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: var(--space-md);
   margin-bottom: var(--space-xl);
 }
@@ -310,7 +310,7 @@
 /* Form Styles */
 .formGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: var(--space-md);
   margin-bottom: var(--space-lg);
 }
@@ -399,3 +399,76 @@
   margin-bottom: var(--space-lg);
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md) var(--space-sm);
+  }
+  
+  .header {
+    padding: var(--space-md);
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .headerContent h1 {
+    font-size: 1.2rem;
+  }
+  
+  .headerActions {
+    width: 100%;
+  }
+  
+  .headerActions button {
+    flex: 1;
+  }
+
+  .kpiCard {
+    padding: var(--space-md);
+  }
+  
+  .kpiIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+  
+  .kpiValue {
+    font-size: 1.2rem;
+  }
+
+  .tabBtn {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  
+  .panel {
+    padding: var(--space-md);
+  }
+  
+  .uploadZone {
+    padding: var(--space-lg) var(--space-md);
+  }
+  
+  .uploadIcon {
+    font-size: 2rem;
+  }
+  
+  .jobCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .jobActions {
+    width: 100%;
+  }
+  
+  .jobActions button {
+    width: 100%;
+  }
+  
+  .docItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+}

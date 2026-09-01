@@ -55,7 +55,7 @@
 /* KPI Cards Grid */
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: var(--space-lg);
   margin-bottom: var(--space-2xl);
 }
@@ -243,3 +243,43 @@
   margin-bottom: var(--space-lg);
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: var(--space-md) var(--space-sm);
+  }
+  
+  .header {
+    padding: var(--space-md);
+  }
+  
+  .titleRow h1 {
+    font-size: 1.2rem;
+  }
+  
+  .headerActions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .headerActions a,
+  .headerActions button {
+    width: 100%;
+  }
+  
+  .tabBtn {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  
+  .panel {
+    padding: var(--space-md);
+  }
+  
+  .kpiCard {
+    padding: var(--space-md);
+  }
+  
+  .kpiValue {
+    font-size: 1.2rem;
+  }
+}

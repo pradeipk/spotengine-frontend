@@ -96,6 +96,7 @@ export default function RegisterPage() {
             onChange={(e) => setName(e.target.value)}
             required
             fullWidth
+            autoComplete="name"
           />
           <Input 
             label="Email Address" 
@@ -105,6 +106,7 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             fullWidth
+            autoComplete="email"
           />
           <Input 
             label="Password" 
@@ -114,6 +116,7 @@ export default function RegisterPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            autoComplete="new-password"
           />
           
           <Button type="submit" fullWidth isLoading={isLoading} className={styles.submitBtn}>
