@@ -10,6 +10,7 @@
   border: none;
   outline: none;
   gap: 8px;
+  min-height: 44px;
 }
 
 .button:disabled {
@@ -58,9 +59,13 @@
   background: rgba(255,255,255,0.05);
 }
 
+.button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
 /* Sizes */
 .sm {
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   font-size: 0.875rem;
 }
 

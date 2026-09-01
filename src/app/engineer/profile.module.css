@@ -15,7 +15,10 @@
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 0;
+  padding: 10px 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   margin-bottom: var(--space-lg);
   font-size: 0.9rem;
   transition: color 0.2s;
@@ -119,6 +122,10 @@
   padding: var(--space-md);
   border-radius: var(--radius-md);
   position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
 }
 
 .certName {
@@ -132,14 +139,13 @@
 }
 
 .verifiedBadge {
-  position: absolute;
-  top: var(--space-md);
-  right: var(--space-md);
   font-size: 0.8rem;
   color: #4CAF50;
   background: rgba(76, 175, 80, 0.1);
   padding: 2px 8px;
   border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .emptyText {
@@ -211,3 +217,49 @@
   gap: var(--space-md);
   color: var(--text-secondary);
 }
+
+@media (max-width: 640px) {
+  .header {
+    padding: var(--space-md);
+  }
+  
+  .headerFlex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  
+  .avatarLarge {
+    width: 64px;
+    height: 64px;
+    font-size: 1.75rem;
+  }
+  
+  .headerInfo h1 {
+    font-size: 1.5rem;
+  }
+  
+  .statsRow {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    font-size: 0.85rem;
+  }
+  
+  .section {
+    padding: var(--space-md);
+  }
+  
+  .section h2 {
+    font-size: 1.2rem;
+  }
+  
+  .bookingSection {
+    padding: var(--space-md);
+    position: static;
+  }
+  
+  .rateCard {
+    padding: var(--space-md);
+  }
+}
+

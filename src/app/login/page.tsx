@@ -75,6 +75,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             required
             fullWidth
+            autoComplete="email"
           />
           <Input 
             label="Password" 
@@ -84,6 +85,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             fullWidth
+            autoComplete="current-password"
           />
           
           <Button type="submit" fullWidth isLoading={isLoading} className={styles.submitBtn}>

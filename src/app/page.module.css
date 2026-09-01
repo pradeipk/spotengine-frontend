@@ -21,6 +21,12 @@
   border-right: none;
 }
 
+@media (max-width: 480px) {
+  .navbar {
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
 .logo {
   font-family: var(--font-heading);
   font-size: 1.5rem;
@@ -31,6 +37,12 @@
   align-items: center;
 }
 
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+}
+
 .comingSoon {
   font-size: 0.85rem;
   font-weight: 600;
@@ -39,6 +51,12 @@
   letter-spacing: 0.5px;
   animation: blinkText 1.2s ease-in-out infinite alternate;
   display: inline-block;
+}
+
+@media (max-width: 480px) {
+  .comingSoon {
+    display: none;
+  }
 }
 
 @keyframes blinkText {
@@ -62,10 +80,20 @@
   gap: var(--space-lg);
 }
 
+@media (max-width: 480px) {
+  .navLinks {
+    gap: var(--space-sm);
+  }
+}
+
 .link {
   color: var(--text-secondary);
   font-weight: 500;
   transition: color 0.2s;
+  padding: var(--space-sm);
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
 }
 
 .link:hover {
@@ -84,6 +112,13 @@
   z-index: 10;
 }
 
+@media (max-width: 480px) {
+  .hero {
+    padding: var(--space-md);
+    padding-top: 80px;
+  }
+}
+
 .heroContent {
   text-align: center;
   max-width: 900px;
@@ -91,7 +126,7 @@
 }
 
 .title {
-  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-size: clamp(1.75rem, 6vw, 3.5rem);
   line-height: 1.1;
   margin-bottom: var(--space-md);
   letter-spacing: -1px;
@@ -112,12 +147,19 @@
   line-height: 1.6;
 }
 
+@media (max-width: 480px) {
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: var(--space-lg);
+  }
+}
+
 /* Search Box */
 .searchBox {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  padding: var(--space-lg);
+  padding: var(--space-md);
   border-radius: var(--radius-lg);
   margin: 0 auto;
   max-width: 800px;
@@ -162,7 +204,7 @@
 .searchBtn {
   white-space: nowrap;
   font-size: 1.1rem;
-  padding: 0 var(--space-xl);
+  padding: 0.75rem var(--space-xl);
 }
 
 /* Decorative Orbs */

@@ -63,6 +63,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 44px;
 }
 
 .roleBtn.active {
@@ -84,6 +85,8 @@
   margin-bottom: var(--space-lg);
   font-size: 0.875rem;
   text-align: center;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .divider {
@@ -119,8 +122,26 @@
   color: var(--accent-primary);
   font-weight: 500;
   transition: color 0.2s;
+  padding: 8px 4px;
+  display: inline-block;
+  min-height: 44px;
+  line-height: 28px;
 }
 
 .footer a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .authCard {
+    padding: var(--space-lg);
+  }
+  
+  .header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .roleBtn {
+    font-size: 0.85rem;
+  }
 }

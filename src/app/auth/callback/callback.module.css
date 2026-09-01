@@ -29,11 +29,15 @@
 
 .errorText {
   color: var(--error) !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .linkBtn {
   margin-top: var(--space-md);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   background: var(--accent-primary);
   color: var(--bg-primary);
   padding: 10px 24px;
@@ -71,3 +75,13 @@
   color: var(--text-secondary);
 }
 
+@media (max-width: 480px) {
+  .card {
+    padding: var(--space-xl) var(--space-md);
+  }
+  
+  .linkBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}

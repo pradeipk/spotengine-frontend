@@ -13,6 +13,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  min-height: 44px;
 }
 
 .googleButton:hover {
