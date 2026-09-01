@@ -21,7 +21,11 @@
 /* Variants */
 .primary {
   background: var(--accent-primary);
-  color: var(--bg-primary);
+  color: #ffffff;
+}
+
+:global(.dark-surface) .primary {
+  color: #0b0c10;
 }
 
 .primary:hover:not(:disabled) {
@@ -32,7 +36,11 @@
 .secondary {
   background: var(--bg-secondary);
   color: var(--text-primary);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+:global(.dark-surface) .secondary {
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .secondary:hover:not(:disabled) {
