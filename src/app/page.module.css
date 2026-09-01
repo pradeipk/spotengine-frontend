@@ -364,3 +364,9 @@
   justify-content: center;
 }
 
+
+.logoImage {
+  margin-right: 12px;
+  object-fit: contain;
+}
+

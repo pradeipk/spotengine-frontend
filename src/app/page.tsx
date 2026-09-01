@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import styles from './page.module.css';
@@ -62,6 +63,7 @@ export default function Home() {
       <div className="dark-surface">
         <nav className={`${styles.navbar} glass-panel`}>
           <div className={styles.logo}>
+            <Image src="/logo.png" alt="Spot Engineer Logo" width={40} height={40} className={styles.logoImage} />
             Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
           </div>
           <div className={styles.navLinks}>
@@ -175,6 +177,9 @@ export default function Home() {
 
       <section className={styles.section}>
         <div className={styles.footerCta}>
+          <div style={{ marginBottom: '24px' }}>
+            <Image src="/logo.png" alt="Spot Engineer Logo" width={80} height={80} className={styles.logoImage} />
+          </div>
           <h2>Ready to get started?</h2>
           <p>Join thousands of businesses getting instant IT support, or register as a certified engineer and start earning on your own schedule.</p>
           <div className={styles.ctaButtons}>
