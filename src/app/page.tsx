@@ -57,64 +57,66 @@ export default function Home() {
   };
 
   return (
-    <div className={styles.main}>
-      {/* Navbar */}
-      <nav className={`${styles.navbar} glass-panel`}>
-        <div className={styles.logo}>
-          Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
-        </div>
-        <div className={styles.navLinks}>
-          <Link href="/login" className={styles.link}>Sign In</Link>
-          <Link href="/register">
-            <Button>Get Started</Button>
-          </Link>
-        </div>
-      </nav>
+    <div className="dark-surface">
+      <div className={styles.main}>
+        {/* Navbar */}
+        <nav className={`${styles.navbar} glass-panel`}>
+          <div className={styles.logo}>
+            Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
+          </div>
+          <div className={styles.navLinks}>
+            <Link href="/login" className={styles.link}>Sign In</Link>
+            <Link href="/register">
+              <Button>Get Started</Button>
+            </Link>
+          </div>
+        </nav>
 
-      {/* Hero Section */}
-      <section className={styles.hero}>
-        <div className={`${styles.heroContent} animate-slide-up`}>
-          <h1 className={styles.title}>
-            On-Demand IT Services & {' '}
-            <span className={styles.gradientText}>Engineering Marketplace</span>
-          </h1>
-          <p className={styles.subtitle}>
-            Book verified, top-tier engineers near you for immediate onsite support.
-          </p>
+        {/* Hero Section */}
+        <section className={styles.hero}>
+          <div className={`${styles.heroContent} animate-slide-up`}>
+            <h1 className={styles.title}>
+              On-Demand IT Services & {' '}
+              <span className={styles.gradientText}>Engineering Marketplace</span>
+            </h1>
+            <p className={styles.subtitle}>
+              Book verified, top-tier engineers near you for immediate onsite support.
+            </p>
 
-          <form onSubmit={handleSearch} className={`${styles.searchBox} glass-panel`}>
-            <div className={styles.searchInputGroup}>
-              <Input
-                label=""
-                placeholder="Search service (e.g. Networking)"
-                value={skill}
-                onChange={(e) => setSkill(e.target.value)}
-                fullWidth
-                className={styles.skillInput}
-              />
-            </div>
-            
-            <div className={styles.locationGroup}>
-              <Button 
-                type="button" 
-                onClick={handleLocateMe}
-                isLoading={isLocating}
-                className={location ? styles.locatedBtn : styles.locateBtn}
-              >
-                {location ? '📍 Location Found' : '📍 Locate Me'}
+            <form onSubmit={handleSearch} className={`${styles.searchBox} glass-panel`}>
+              <div className={styles.searchInputGroup}>
+                <Input
+                  label=""
+                  placeholder="Search service (e.g. Networking)"
+                  value={skill}
+                  onChange={(e) => setSkill(e.target.value)}
+                  fullWidth
+                  className={styles.skillInput}
+                />
+              </div>
+              
+              <div className={styles.locationGroup}>
+                <Button 
+                  type="button" 
+                  onClick={handleLocateMe}
+                  isLoading={isLocating}
+                  className={location ? styles.locatedBtn : styles.locateBtn}
+                >
+                  {location ? '📍 Location Found' : '📍 Locate Me'}
+                </Button>
+              </div>
+
+              <Button type="submit" className={styles.searchBtn}>
+                Find Engineers
               </Button>
-            </div>
-
-            <Button type="submit" className={styles.searchBtn}>
-              Find Engineers
-            </Button>
-          </form>
-        </div>
-      </section>
-      
-      {/* Floating abstract decorative elements */}
-      <div className={styles.orb1}></div>
-      <div className={styles.orb2}></div>
+            </form>
+          </div>
+        </section>
+        
+        {/* Floating abstract decorative elements */}
+        <div className={styles.orb1}></div>
+        <div className={styles.orb2}></div>
+      </div>
     </div>
   );
 }

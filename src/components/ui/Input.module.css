@@ -24,7 +24,7 @@
 .input {
   width: 100%;
   background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   padding: 0.75rem 1rem;
@@ -35,12 +35,20 @@
   min-height: 44px;
 }
 
+:global(.dark-surface) .input {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .input:focus {
   border-color: var(--accent-primary);
   box-shadow: 0 0 0 2px rgba(102, 252, 241, 0.2);
 }
 
 .input::placeholder {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+:global(.dark-surface) .input::placeholder {
   color: rgba(255, 255, 255, 0.3);
 }
 

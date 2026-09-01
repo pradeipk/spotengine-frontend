@@ -1,20 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Colors */
-  --bg-primary: #0b0c10;
-  --bg-secondary: #1f2833;
-  --bg-glass: rgba(31, 40, 51, 0.6);
+  /* Light Mode Colors (Default) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-glass: #ffffff;
   
-  --text-primary: #ffffff;
-  --text-secondary: #c5c6c7;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
   
-  --accent-primary: #66fcf1;
-  --accent-secondary: #45a29e;
+  --accent-primary: #0d9488;
+  --accent-secondary: #0f766e;
   
-  --error: #ff4c4c;
-  --success: #00ff88;
-  --warning: #ffcc00;
+  --error: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+
+  /* Dark Surface Colors */
+  --dark-bg-primary: #0f172a;
+  --dark-bg-secondary: #1e293b;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #94a3b8;
+  --dark-accent-primary: #66fcf1;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -88,11 +95,18 @@ p {
 
 /* Utilities */
 .glass-panel {
-  background: var(--bg-glass);
+  background: var(--bg-secondary);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.dark-surface .glass-panel {
+  background: rgba(31, 40, 51, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(102, 252, 241, 0.1);
-  border-radius: var(--radius-lg);
+  box-shadow: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -110,6 +124,17 @@ p {
 
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
+}
+
+.dark-surface {
+  background-color: var(--dark-bg-primary);
+  color: var(--dark-text-primary);
+  
+  --bg-primary: var(--dark-bg-primary);
+  --bg-secondary: var(--dark-bg-secondary);
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --accent-primary: var(--dark-accent-primary);
 }
 
 /* Mobile-first responsive utilities */

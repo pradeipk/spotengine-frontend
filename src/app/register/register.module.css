@@ -8,17 +8,6 @@
   overflow: hidden;
 }
 
-/* Background Gradients */
-.container::before {
-  content: '';
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 50%;
-  height: 50%;
-  background: radial-gradient(circle, rgba(102,252,241,0.15) 0%, rgba(11,12,16,0) 70%);
-  z-index: -1;
-}
 
 .authCard {
   width: 100%;
