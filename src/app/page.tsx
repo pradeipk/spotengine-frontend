@@ -57,9 +57,9 @@ export default function Home() {
   };
 
   return (
-    <div className="dark-surface">
-      <div className={styles.main}>
-        {/* Navbar */}
+    <div className={styles.main}>
+      {/* Dark Hero Surface */}
+      <div className="dark-surface">
         <nav className={`${styles.navbar} glass-panel`}>
           <div className={styles.logo}>
             Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
@@ -72,7 +72,6 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* Hero Section */}
         <section className={styles.hero}>
           <div className={`${styles.heroContent} animate-slide-up`}>
             <h1 className={styles.title}>
@@ -111,12 +110,83 @@ export default function Home() {
               </Button>
             </form>
           </div>
+          
+          <div className={styles.orb1}></div>
+          <div className={styles.orb2}></div>
         </section>
-        
-        {/* Floating abstract decorative elements */}
-        <div className={styles.orb1}></div>
-        <div className={styles.orb2}></div>
       </div>
+
+      {/* Light Content Sections - Marketing Content */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>Why Choose SpotEngineer?</h2>
+          <p>India's first transparent, geofenced marketplace connecting businesses with verified IT talent.</p>
+        </div>
+        <div className={styles.grid}>
+          <div className={styles.card}>
+            <div className={styles.cardIcon}>🛡️</div>
+            <h3>Verified Professionals</h3>
+            <p>Every engineer passes Aadhaar eKYC, live selfie liveness detection, and strict credential checks before they can accept jobs on our platform.</p>
+          </div>
+          <div className={styles.card}>
+            <div className={styles.cardIcon}>📍</div>
+            <h3>Hyperlocal Dispatch</h3>
+            <p>Our geospatial matching finds you the absolute best engineers within a 40km radius for lightning-fast onsite resolution.</p>
+          </div>
+          <div className={styles.card}>
+            <div className={styles.cardIcon}>💸</div>
+            <h3>Secure Escrow Payments</h3>
+            <p>Your money is held safely in escrow and only released to the engineer via UPI split-settlement once you confirm the job is complete.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Full width alternative background */}
+      <div className={styles.bgAlt}>
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2>Services We Cover</h2>
+            <p>From one-off break-fixes to ongoing infrastructure management, we have the certified talent you need.</p>
+          </div>
+          <div className={styles.grid}>
+            <div className={styles.card}>
+              <div className={styles.cardIcon}>🌐</div>
+              <h3>Network & Security</h3>
+              <p>Firewall configuration, router setup, LAN troubleshooting, and enterprise vulnerability patching.</p>
+            </div>
+            <div className={styles.card}>
+              <div className={styles.cardIcon}>☁️</div>
+              <h3>Cloud Infrastructure</h3>
+              <p>AWS/Azure deployments, physical server migrations, and active directory management.</p>
+            </div>
+            <div className={styles.card}>
+              <div className={styles.cardIcon}>💻</div>
+              <h3>On-Site AMC</h3>
+              <p>Annual Maintenance Contracts for office hardware, endpoints, POS systems, and server racks.</p>
+            </div>
+            <div className={styles.card}>
+              <div className={styles.cardIcon}>🧠</div>
+              <h3>Software & AI</h3>
+              <p>Custom software integrations, application deployment, and local enterprise AI model setup.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section className={styles.section}>
+        <div className={styles.footerCta}>
+          <h2>Ready to get started?</h2>
+          <p>Join thousands of businesses getting instant IT support, or register as a certified engineer and start earning on your own schedule.</p>
+          <div className={styles.ctaButtons}>
+            <Link href="/register">
+              <Button style={{ background: '#ffffff', color: '#0f172a', border: 'none' }}>Hire an Engineer</Button>
+            </Link>
+            <Link href="/register">
+              <Button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#ffffff' }}>Apply to Work</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
