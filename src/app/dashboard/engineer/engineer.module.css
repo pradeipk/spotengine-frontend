@@ -220,6 +220,16 @@
   color: var(--text-primary);
 }
 
+.docName a {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.docName a:hover {
+  text-decoration: underline;
+  color: var(--brand-blue);
+}
+
 .docMeta {
   font-size: 0.8rem;
   color: var(--text-secondary);
