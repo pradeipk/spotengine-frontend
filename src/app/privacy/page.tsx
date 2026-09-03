@@ -111,8 +111,7 @@ export default function PrivacyPolicyPage() {
               If you have questions, concerns, or requests regarding this Privacy Policy or our data handling practices, please contact our team at:
             </p>
             <p>
-              <strong>Email:</strong> support@spotengineer.in<br />
-              <strong>Website:</strong> https://spotengineer.in
+              <strong>Email:</strong> infospotengineer@gmail.com<br />
             </p>
           </section>
         </div>
