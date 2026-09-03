@@ -211,6 +211,11 @@ export default function Home() {
               <Button style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.3)', color: '#ffffff' }}>Apply to Work</Button>
             </Link>
           </div>
+          <div style={{ marginTop: '32px', display: 'flex', gap: '16px', justifyContent: 'center', fontSize: '0.85rem', opacity: 0.8 }}>
+            <Link href="/privacy" style={{ color: '#ffffff', textDecoration: 'none' }}>Privacy Policy</Link>
+            <span>•</span>
+            <Link href="/terms" style={{ color: '#ffffff', textDecoration: 'none' }}>Terms of Service</Link>
+          </div>
         </div>
       </section>
     </div>

@@ -110,6 +110,21 @@ export default function EngineerDashboardPage() {
           setSelectedCategoryId(cats[0].id);
         }
       }
+
+      // 4. Fetch Uploaded Documents
+      const docsRes = await api.get('/users/documents').catch(() => null);
+      if (docsRes?.data) {
+        const docs = docsRes.data.data || docsRes.data || [];
+        setUploadedDocs(
+          docs.map((d: any) => ({
+            id: d.id,
+            name: d.originalName,
+            type: d.documentType.toUpperCase(),
+            url: d.fileUrl,
+            uploadedAt: new Date(d.createdAt).toLocaleDateString(),
+          }))
+        );
+      }
     } catch (err: any) {
       console.error(err);
     } finally {
@@ -190,22 +205,22 @@ export default function EngineerDashboardPage() {
       });
 
       const docUrl = res.data?.url || `/uploads/${file.name}`;
-      setUploadedDocs((prev) => [
-        ...prev,
-        {
-          name: file.name,
-          type: docType.toUpperCase(),
-          url: docUrl,
-          uploadedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-
       setMessage(`📄 ${file.name} uploaded successfully!`);
       setTimeout(() => setMessage(''), 4000);
+      fetchDashboardData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Upload failed. Ensure file is PDF, PNG, or JPG under 5MB.');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleDeleteDocument = async (id: string) => {
+    try {
+      await api.delete(`/users/documents/${id}`);
+      fetchDashboardData();
+    } catch (err) {
+      setError('Failed to delete document');
     }
   };
 
@@ -441,11 +456,24 @@ export default function EngineerDashboardPage() {
                   <div className={styles.docInfo}>
                     <span className={styles.docIcon}>📎</span>
                     <div>
-                      <div className={styles.docName}>{doc.name}</div>
+                      <div className={styles.docName}>
+                        <a href={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '')}${doc.url}`} target="_blank" rel="noopener noreferrer">
+                          {doc.name}
+                        </a>
+                      </div>
                       <div className={styles.docMeta}>{doc.type} • Uploaded at {doc.uploadedAt}</div>
                     </div>
                   </div>
-                  <span className={styles.verifiedBadge}>✓ Uploaded</span>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <span className={styles.verifiedBadge}>✓ Uploaded</span>
+                    <button 
+                      onClick={() => (doc as any).id && handleDeleteDocument((doc as any).id)}
+                      style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer', fontSize: '1.2rem' }}
+                      title="Delete document"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
