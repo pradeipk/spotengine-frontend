@@ -13,16 +13,37 @@ export default function Home() {
   const [skill, setSkill] = useState('');
   const [isLocating, setIsLocating] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [locationName, setLocationName] = useState('');
 
   const handleLocateMe = () => {
     setIsLocating(true);
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setLocation({ lat, lng });
+
+          // Reverse geocode to get city name
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&zoom=10`,
+              { headers: { 'Accept-Language': 'en' } }
+            );
+            const data = await res.json();
+            const city =
+              data.address?.city ||
+              data.address?.town ||
+              data.address?.village ||
+              data.address?.county ||
+              data.address?.state ||
+              '';
+            setLocationName(city);
+          } catch {
+            // Silently fail — coordinates still work for search
+            setLocationName('');
+          }
+
           setIsLocating(false);
         },
         (error) => {
@@ -103,7 +124,7 @@ export default function Home() {
                   isLoading={isLocating}
                   className={location ? styles.locatedBtn : styles.locateBtn}
                 >
-                  {location ? '📍 Location Found' : '📍 Locate Me'}
+                  {location ? `📍 ${locationName || 'Location Found'}` : '📍 Locate Me'}
                 </Button>
               </div>
 
