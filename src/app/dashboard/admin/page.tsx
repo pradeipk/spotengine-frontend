@@ -171,6 +171,9 @@ export default function AdminDashboardPage() {
     return <div className={styles.loadingState}>Loading Admin Dashboard...</div>;
   }
 
+  const cleanName = (user?.name || '').replace(/\s*undefined/gi, '').trim();
+  const userDisplayName = cleanName || user?.email?.split('@')[0] || 'Admin';
+
   return (
     <>
       <AppNavbar />
@@ -185,7 +188,7 @@ export default function AdminDashboardPage() {
                   {isSuperAdmin ? '⚡ Super Admin' : '🛡️ Franchise Admin'}
                 </span>
               </div>
-              <p>Welcome back, <strong>{user?.name || user?.email?.split('@')[0] || 'Admin'}</strong>{user?.email ? ` (${user.email})` : ''}. Manage regional tenants, engineers & revenue.</p>
+              <p>Welcome back, <strong>{userDisplayName}</strong>{user?.email ? ` (${user.email})` : ''}. Manage regional tenants, engineers & revenue.</p>
             </div>
           <div className={styles.headerActions}>
             <a 

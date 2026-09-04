@@ -62,7 +62,8 @@ export default function EngineerDashboardPage() {
   // Skill Form States
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [skillName, setSkillName] = useState('');
-  const [experienceYears, setExperienceYears] = useState(3);
+  const [experienceYears, setExperienceYears] = useState<number>(1);
+  const [experienceMonths, setExperienceMonths] = useState<number>(0);
 
   // Status & Feedback
   const [isLoading, setIsLoading] = useState(true);
@@ -241,6 +242,14 @@ export default function EngineerDashboardPage() {
     e.preventDefault();
     if (!skillName.trim()) return;
 
+    const years = Math.max(0, Number(experienceYears) || 0);
+    const months = Math.max(0, Number(experienceMonths) || 0);
+
+    if (years === 0 && months === 0) {
+      setError('Please enter at least 1 month of experience.');
+      return;
+    }
+
     setIsSaving(true);
     setMessage('');
     setError('');
@@ -249,17 +258,43 @@ export default function EngineerDashboardPage() {
       await api.post('/catalog/profile/skills', {
         categoryId: selectedCategoryId,
         skillName: skillName.trim(),
-        experienceYears: Number(experienceYears),
+        yearsOfExperience: years,
+        monthsOfExperience: months,
+        experienceYears: years,
+        experienceMonths: months,
       });
 
-      setMessage(`🛠️ Skill "${skillName}" added to your profile!`);
+      const expLabel = [
+        years > 0 ? `${years} yr${years > 1 ? 's' : ''}` : '',
+        months > 0 ? `${months} mo${months > 1 ? 's' : ''}` : '',
+      ].filter(Boolean).join(' ');
+
+      setMessage(`🛠️ Skill "${skillName}" (${expLabel}) added to your profile!`);
       setSkillName('');
+      setExperienceYears(1);
+      setExperienceMonths(0);
       setTimeout(() => setMessage(''), 4000);
       fetchDashboardData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to add skill.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Delete Skill
+  const handleDeleteSkill = async (skillId: string) => {
+    if (!confirm('Are you sure you want to remove this skill from your profile?')) {
+      return;
+    }
+
+    try {
+      await api.delete(`/catalog/profile/skills/${skillId}`);
+      setMessage('✓ Skill removed from your profile.');
+      setTimeout(() => setMessage(''), 4000);
+      fetchDashboardData();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to remove skill.');
     }
   };
 
@@ -282,6 +317,9 @@ export default function EngineerDashboardPage() {
     router.push('/login');
   };
 
+  const cleanName = (user?.name || '').replace(/\s*undefined/gi, '').trim();
+  const userDisplayName = cleanName || user?.email?.split('@')[0] || 'Engineer';
+
   return (
     <>
       <AppNavbar onSwitchRole={handleSwitchToCustomer} switchRoleLabel="👤 Customer Mode" />
@@ -293,13 +331,13 @@ export default function EngineerDashboardPage() {
               {user?.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
-                  alt={user.name || 'Engineer Avatar'}
+                  alt={userDisplayName}
                   className={styles.profileAvatarLarge}
                   referrerPolicy="no-referrer"
                 />
               ) : (
                 <div className={styles.profileAvatarFallbackLarge}>
-                  {(user?.name || user?.email || 'E').charAt(0).toUpperCase()}
+                  {(cleanName || user?.email || 'E').charAt(0).toUpperCase()}
                 </div>
               )}
               <div>
@@ -308,7 +346,7 @@ export default function EngineerDashboardPage() {
                   <span className={styles.roleBadge}>🛠️ Engineer</span>
                   <span className={styles.verifiedBadge}>✓ Ready for Jobs</span>
                 </h1>
-                <p>Welcome, <strong>{user?.name || user?.email?.split('@')[0]}</strong> ({user?.email}). Manage your profile, resume, service radius & job inquiries.</p>
+                <p>Welcome, <strong>{userDisplayName}</strong> ({user?.email}). Manage your profile, resume, service radius & job inquiries.</p>
               </div>
             </div>
           </div>
@@ -638,21 +676,41 @@ export default function EngineerDashboardPage() {
 
             <Input
               label="Skill Name / Specialization"
-              placeholder="e.g. Cisco Routing, Server Virtualization"
+              placeholder="e.g. AWS, Cisco Routing, Server Virtualization"
               value={skillName}
               onChange={(e) => setSkillName(e.target.value)}
               required
             />
 
-            <Input
-              label="Years of Experience"
-              type="number"
-              min="1"
-              max="40"
-              value={experienceYears}
-              onChange={(e) => setExperienceYears(Number(e.target.value))}
-              required
-            />
+            <div className={styles.formGroup}>
+              <label>Experience Duration</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                <Input
+                  label="Years"
+                  type="number"
+                  min="0"
+                  max="50"
+                  value={experienceYears}
+                  onChange={(e) => setExperienceYears(Math.max(0, parseInt(e.target.value) || 0))}
+                  required
+                />
+                <Input
+                  label="Months"
+                  type="number"
+                  min="0"
+                  max="11"
+                  value={experienceMonths}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value) || 0;
+                    setExperienceMonths(Math.min(11, Math.max(0, val)));
+                  }}
+                  required
+                />
+              </div>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
+                Duration: {experienceYears} yr{experienceYears === 1 ? '' : 's'} {experienceMonths} mo{experienceMonths === 1 ? '' : 's'}
+              </span>
+            </div>
 
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
               <Button type="submit" isLoading={isSaving} fullWidth>
@@ -660,6 +718,71 @@ export default function EngineerDashboardPage() {
               </Button>
             </div>
           </form>
+
+          {/* List of Added Skills */}
+          <div style={{ marginTop: '2.5rem' }}>
+            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🛠️ Your Listed Skills & Experience</span>
+              <span style={{ fontSize: '0.8rem', padding: '2px 8px', background: 'rgba(13, 148, 136, 0.15)', color: 'var(--accent-primary)', borderRadius: 'var(--radius-full)', fontWeight: 600 }}>
+                {profile?.skills?.length || 0}
+              </span>
+            </h3>
+
+            {(!profile?.skills || profile.skills.length === 0) ? (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontStyle: 'italic', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: 'var(--radius-md)' }}>
+                No technical skills added yet. Use the form above to add your skills and exact experience.
+              </p>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: '0.75rem' }}>
+                {profile.skills.map((s: any) => {
+                  const yrs = s.yearsOfExperience ?? 0;
+                  const mos = s.monthsOfExperience ?? 0;
+                  const expText = [
+                    yrs > 0 ? `${yrs} yr${yrs > 1 ? 's' : ''}` : '',
+                    mos > 0 ? `${mos} mo${mos > 1 ? 's' : ''}` : '',
+                  ].filter(Boolean).join(' ') || `${yrs} yrs`;
+
+                  return (
+                    <div
+                      key={s.id}
+                      className="glass-panel"
+                      style={{
+                        padding: '0.85rem 1rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        border: '1px solid rgba(0, 0, 0, 0.08)',
+                        borderRadius: 'var(--radius-md)',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                          {s.skillName || s.category?.name || 'Technical Skill'}
+                        </div>
+                        {s.skillName && s.category?.name && (
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                            Category: {s.category.name}
+                          </div>
+                        )}
+                        <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', fontWeight: 600, marginTop: '2px' }}>
+                          ⏱️ {expText} exp
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDeleteSkill(s.id)}
+                        title="Remove skill"
+                        style={{ color: 'var(--error)', padding: '4px 8px', minHeight: '36px' }}
+                      >
+                        🗑️
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </section>
       )}
       </div>

@@ -117,12 +117,12 @@ export default function Home() {
                     {user.avatarUrl ? (
                       <img
                         src={user.avatarUrl}
-                        alt={user.name || 'User'}
+                        alt={(user.name || '').replace(/\s*undefined/gi, '').trim() || 'User'}
                         style={{ width: '20px', height: '20px', borderRadius: '50%', marginRight: '6px', verticalAlign: 'middle', objectFit: 'cover' }}
                         referrerPolicy="no-referrer"
                       />
                     ) : null}
-                    {user.name ? user.name.split(' ')[0] : 'My Account'}
+                    {(user.name || '').replace(/\s*undefined/gi, '').trim() ? (user.name || '').replace(/\s*undefined/gi, '').trim().split(' ')[0] : 'My Account'}
                   </Button>
                 </Link>
               </div>

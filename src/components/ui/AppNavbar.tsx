@@ -26,8 +26,9 @@ export const AppNavbar: React.FC<AppNavbarProps> = ({
     router.push('/login');
   };
 
-  const displayName = user?.name || user?.email?.split('@')[0] || 'User';
-  const initial = (user?.name || user?.email || 'U').charAt(0).toUpperCase();
+  const cleanName = (user?.name || '').replace(/\s*undefined/gi, '').trim();
+  const displayName = cleanName || user?.email?.split('@')[0] || 'User';
+  const initial = (cleanName || user?.email || 'U').charAt(0).toUpperCase();
 
   const dashboardUrl =
     user?.role === 'engineer'

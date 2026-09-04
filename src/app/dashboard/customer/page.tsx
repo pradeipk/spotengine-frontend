@@ -89,6 +89,9 @@ export default function CustomerDashboard() {
 
   if (isLoading) return <div className={styles.loadingState}>Loading dashboard...</div>;
 
+  const cleanName = (user?.name || '').replace(/\s*undefined/gi, '').trim();
+  const userDisplayName = cleanName || user?.email?.split('@')[0] || 'Customer';
+
   return (
     <>
       <AppNavbar onSwitchRole={handleSwitchToEngineer} switchRoleLabel="🛠️ Engineer Mode" />
@@ -99,17 +102,17 @@ export default function CustomerDashboard() {
               {user?.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
-                  alt={user.name || 'User Avatar'}
+                  alt={userDisplayName}
                   className={styles.profileAvatarLarge}
                   referrerPolicy="no-referrer"
                 />
               ) : (
                 <div className={styles.profileAvatarFallbackLarge}>
-                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                  {(cleanName || user?.email || 'U').charAt(0).toUpperCase()}
                 </div>
               )}
               <div>
-                <h1>Welcome, {user?.name || user?.email?.split('@')[0]}</h1>
+                <h1>Welcome, {userDisplayName}</h1>
                 <p className={styles.userEmailSub}>{user?.email}</p>
                 <p>Manage your service requests and bookings.</p>
               </div>
