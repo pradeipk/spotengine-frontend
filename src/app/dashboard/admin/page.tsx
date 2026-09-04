@@ -6,6 +6,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
+import { AppNavbar } from '@/components/ui/AppNavbar';
 import styles from './admin.module.css';
 
 interface DashboardStats {
@@ -171,19 +172,21 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <header className={`${styles.header} glass-panel`}>
-        <div className={styles.headerContent}>
-          <div>
-            <div className={styles.titleRow}>
-              <h1>SpotEngineer Control Center</h1>
-              <span className={styles.roleBadge}>
-                {isSuperAdmin ? '⚡ Super Admin' : '🛡️ Franchise Admin'}
-              </span>
+    <>
+      <AppNavbar />
+      <div className={styles.container}>
+        {/* Header */}
+        <header className={`${styles.header} glass-panel`}>
+          <div className={styles.headerContent}>
+            <div>
+              <div className={styles.titleRow}>
+                <h1>SpotEngineer Control Center</h1>
+                <span className={styles.roleBadge}>
+                  {isSuperAdmin ? '⚡ Super Admin' : '🛡️ Franchise Admin'}
+                </span>
+              </div>
+              <p>Welcome back, <strong>{user?.name || user?.email?.split('@')[0] || 'Admin'}</strong>{user?.email ? ` (${user.email})` : ''}. Manage regional tenants, engineers & revenue.</p>
             </div>
-            <p>Welcome back, <strong>{user?.email}</strong>. Manage regional tenants, engineers & revenue.</p>
-          </div>
           <div className={styles.headerActions}>
             <a 
               href={(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1').replace('/api/v1', '/api/docs')} 
@@ -495,7 +498,8 @@ export default function AdminDashboardPage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

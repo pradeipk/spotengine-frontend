@@ -30,6 +30,40 @@
   color: var(--text-secondary);
 }
 
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.profileAvatarLarge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.profileAvatarFallbackLarge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.userEmailSub {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 .roleBadge {
   font-size: 0.8rem;
   background: rgba(102, 252, 241, 0.15);

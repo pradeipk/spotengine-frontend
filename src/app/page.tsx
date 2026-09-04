@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import styles from './page.module.css';
 
 export default function Home() {
   const router = useRouter();
+  const { user } = useAuthStore();
   const [skill, setSkill] = useState('');
   const [isLocating, setIsLocating] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -88,10 +90,50 @@ export default function Home() {
             Spot Engineer <span className={styles.comingSoon}>(Coming Soon)</span>
           </div>
           <div className={styles.navLinks}>
-            <Link href="/login" className={styles.link}>Sign In</Link>
-            <Link href="/register">
-              <Button>Get Started</Button>
-            </Link>
+            {user ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <Link
+                  href={
+                    user.role === 'engineer'
+                      ? '/dashboard/engineer'
+                      : user.role === 'admin' || user.role === 'super_admin'
+                      ? '/dashboard/admin'
+                      : '/dashboard/customer'
+                  }
+                  className={styles.link}
+                >
+                  📋 Dashboard
+                </Link>
+                <Link
+                  href={
+                    user.role === 'engineer'
+                      ? '/dashboard/engineer'
+                      : user.role === 'admin' || user.role === 'super_admin'
+                      ? '/dashboard/admin'
+                      : '/dashboard/customer'
+                  }
+                >
+                  <Button size="sm">
+                    {user.avatarUrl ? (
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.name || 'User'}
+                        style={{ width: '20px', height: '20px', borderRadius: '50%', marginRight: '6px', verticalAlign: 'middle', objectFit: 'cover' }}
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : null}
+                    {user.name ? user.name.split(' ')[0] : 'My Account'}
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link href="/login" className={styles.link}>Sign In</Link>
+                <Link href="/register">
+                  <Button>Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
 

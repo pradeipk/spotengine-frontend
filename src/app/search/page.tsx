@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
+import { AppNavbar } from '@/components/ui/AppNavbar';
 import styles from './search.module.css';
 
 interface Engineer {
@@ -59,7 +60,9 @@ function SearchResultsContent() {
   }
 
   return (
-    <div className={styles.container}>
+    <>
+      <AppNavbar />
+      <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.headerContent}>
           <button onClick={() => router.push('/')} className={styles.backBtn}>
@@ -112,7 +115,8 @@ function SearchResultsContent() {
           )}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

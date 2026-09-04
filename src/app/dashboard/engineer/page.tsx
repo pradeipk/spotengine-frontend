@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { SetPasswordModal } from '@/components/ui/SetPasswordModal';
+import { AppNavbar } from '@/components/ui/AppNavbar';
 import styles from './engineer.module.css';
 
 interface BookingJob {
@@ -281,26 +283,47 @@ export default function EngineerDashboardPage() {
   };
 
   return (
-    <div className={styles.container}>
-      {/* Header */}
-      <header className={`${styles.header} glass-panel`}>
-        <div className={styles.headerContent}>
-          <h1>
-            SpotEngineer Resource Center
-            <span className={styles.roleBadge}>🛠️ Engineer</span>
-            <span className={styles.verifiedBadge}>✓ Ready for Jobs</span>
-          </h1>
-          <p>Logged in as <strong>{user?.email}</strong>. Manage your profile, resume, service radius & job inquiries.</p>
-        </div>
-        <div className={styles.headerActions}>
-          <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
-            {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
-          </Button>
-          <Button variant="outline" onClick={handleSwitchToCustomer}>👤 Customer Mode</Button>
-          <Button variant="outline" onClick={fetchDashboardData}>🔄 Refresh</Button>
-          <Button variant="outline" onClick={handleLogout}>Logout</Button>
-        </div>
-      </header>
+    <>
+      <AppNavbar onSwitchRole={handleSwitchToCustomer} switchRoleLabel="👤 Customer Mode" />
+      <div className={styles.container}>
+        {/* Header */}
+        <header className={`${styles.header} glass-panel`}>
+          <div className={styles.headerContent}>
+            <div className={styles.profileHeader}>
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name || 'Engineer Avatar'}
+                  className={styles.profileAvatarLarge}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className={styles.profileAvatarFallbackLarge}>
+                  {(user?.name || user?.email || 'E').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <h1>
+                  SpotEngineer Resource Center
+                  <span className={styles.roleBadge}>🛠️ Engineer</span>
+                  <span className={styles.verifiedBadge}>✓ Ready for Jobs</span>
+                </h1>
+                <p>Welcome, <strong>{user?.name || user?.email?.split('@')[0]}</strong> ({user?.email}). Manage your profile, resume, service radius & job inquiries.</p>
+              </div>
+            </div>
+          </div>
+          <div className={styles.headerActions}>
+            <Link href="/">
+              <Button variant="outline">🏠 Home</Button>
+            </Link>
+            <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
+              {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
+            </Button>
+            <Button variant="outline" onClick={handleSwitchToCustomer}>👤 Customer Mode</Button>
+            <Button variant="outline" onClick={fetchDashboardData}>🔄 Refresh</Button>
+            <Button variant="outline" onClick={handleLogout}>Logout</Button>
+          </div>
+        </header>
 
       {/* Password Status Alerts */}
       {passwordSuccessMsg && <div className={styles.alertSuccess}>✓ {passwordSuccessMsg}</div>}
@@ -639,7 +662,8 @@ export default function EngineerDashboardPage() {
           </form>
         </section>
       )}
-    </div>
+      </div>
+    </>
   );
 }
 

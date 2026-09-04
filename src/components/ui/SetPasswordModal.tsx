@@ -115,3 +115,4 @@ export const SetPasswordModal: React.FC<SetPasswordModalProps> = ({
     </div>
   );
 };
+

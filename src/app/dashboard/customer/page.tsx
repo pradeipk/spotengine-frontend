@@ -7,6 +7,7 @@ import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { SetPasswordModal } from '@/components/ui/SetPasswordModal';
+import { AppNavbar } from '@/components/ui/AppNavbar';
 import styles from './dashboard.module.css';
 
 interface Booking {
@@ -48,7 +49,7 @@ export default function CustomerDashboard() {
     const fetchDashboardData = async () => {
       try {
         const [profileRes, bookingsRes] = await Promise.allSettled([
-          api.get('/users/me'),
+          api.get('/users/me').catch(() => api.get('/auth/me')),
           api.get('/bookings/my-jobs'),
         ]);
 
@@ -89,23 +90,43 @@ export default function CustomerDashboard() {
   if (isLoading) return <div className={styles.loadingState}>Loading dashboard...</div>;
 
   return (
-    <div className={styles.container}>
-      <header className={`${styles.header} glass-panel`}>
-        <div className={styles.headerContent}>
-          <div>
-            <h1>Welcome, {user?.email}</h1>
-            <p>Manage your service requests and bookings.</p>
+    <>
+      <AppNavbar onSwitchRole={handleSwitchToEngineer} switchRoleLabel="🛠️ Engineer Mode" />
+      <div className={styles.container}>
+        <header className={`${styles.header} glass-panel`}>
+          <div className={styles.headerContent}>
+            <div className={styles.profileHeader}>
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name || 'User Avatar'}
+                  className={styles.profileAvatarLarge}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className={styles.profileAvatarFallbackLarge}>
+                  {(user?.name || user?.email || 'U').charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <h1>Welcome, {user?.name || user?.email?.split('@')[0]}</h1>
+                <p className={styles.userEmailSub}>{user?.email}</p>
+                <p>Manage your service requests and bookings.</p>
+              </div>
+            </div>
+            <div className={styles.headerActions}>
+              <Link href="/">
+                <Button variant="outline">🏠 Home</Button>
+              </Link>
+              <Button onClick={() => setIsPasswordModalOpen(true)} variant="outline">
+                {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
+              </Button>
+              <Button onClick={handleSwitchToEngineer} variant="outline">🛠️ Engineer Mode</Button>
+              <Button onClick={() => router.push('/search')} variant="outline">Book New Service</Button>
+              <Button onClick={handleLogout} variant="outline">Logout</Button>
+            </div>
           </div>
-          <div className={styles.headerActions}>
-            <Button onClick={() => setIsPasswordModalOpen(true)} variant="outline">
-              {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
-            </Button>
-            <Button onClick={handleSwitchToEngineer} variant="outline">🛠️ Engineer Mode</Button>
-            <Button onClick={() => router.push('/')} variant="outline">Book New Service</Button>
-            <Button onClick={handleLogout} variant="outline">Logout</Button>
-          </div>
-        </div>
-      </header>
+        </header>
 
       {passwordSuccessMsg && (
         <div style={{ margin: 'var(--space-md) auto', maxWidth: '1200px', padding: '12px 16px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', border: '1px solid var(--success)', borderRadius: 'var(--radius-md)' }}>
@@ -162,6 +183,7 @@ export default function CustomerDashboard() {
           </div>
         )}
       </main>
-    </div>
+      </div>
+    </>
   );
 }

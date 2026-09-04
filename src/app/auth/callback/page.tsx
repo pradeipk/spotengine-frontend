@@ -31,7 +31,7 @@ function CallbackContent() {
         setStatusText('Loading your profile...');
 
         // Fetch user profile
-        const meRes = await api.get('/auth/me');
+        const meRes = await api.get('/auth/me').catch(() => api.get('/users/me'));
         const userData = meRes.data?.data || meRes.data || { role };
         setUser(userData);
 
