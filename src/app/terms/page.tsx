@@ -115,7 +115,7 @@ export default function TermsOfServicePage() {
               For inquiries, legal notices, or questions regarding these Terms, please contact:
             </p>
             <p>
-              <strong>Email:</strong> legal@spotengineer.in / support@spotengineer.in<br />
+              <strong>Email:</strong> infospotengineer@gmail.com<br />
               <strong>Platform:</strong> https://spotengineer.in
             </p>
           </section>
