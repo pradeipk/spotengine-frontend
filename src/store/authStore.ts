@@ -8,6 +8,9 @@ interface User {
   email: string;
   role: UserRole;
   tenantId: string;
+  name?: string;
+  avatarUrl?: string;
+  hasPassword?: boolean;
 }
 
 interface AuthState {

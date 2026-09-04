@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { SetPasswordModal } from '@/components/ui/SetPasswordModal';
 import styles from './engineer.module.css';
 
 interface BookingJob {
@@ -67,6 +68,8 @@ export default function EngineerDashboardPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordSuccessMsg, setPasswordSuccessMsg] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,12 +80,19 @@ export default function EngineerDashboardPage() {
     }
 
     fetchDashboardData();
-  }, [user, router]);
+  }, [user?.role, router]);
 
   const fetchDashboardData = async () => {
     setIsLoading(true);
     setError('');
     try {
+      // 0. Refresh User Account & Security Info
+      const meRes = await api.get('/users/me').catch(() => null);
+      if (meRes?.data) {
+        const me = meRes.data.data || meRes.data;
+        setUser({ ...user, ...me });
+      }
+
       // 1. Fetch or initialize Engineer Profile
       const profileRes = await api.get('/catalog/profile').catch(() => null);
       if (profileRes?.data) {
@@ -283,11 +293,33 @@ export default function EngineerDashboardPage() {
           <p>Logged in as <strong>{user?.email}</strong>. Manage your profile, resume, service radius & job inquiries.</p>
         </div>
         <div className={styles.headerActions}>
+          <Button variant="outline" onClick={() => setIsPasswordModalOpen(true)}>
+            {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
+          </Button>
           <Button variant="outline" onClick={handleSwitchToCustomer}>👤 Customer Mode</Button>
           <Button variant="outline" onClick={fetchDashboardData}>🔄 Refresh</Button>
           <Button variant="outline" onClick={handleLogout}>Logout</Button>
         </div>
       </header>
+
+      {/* Password Status Alerts */}
+      {passwordSuccessMsg && <div className={styles.alertSuccess}>✓ {passwordSuccessMsg}</div>}
+      {!user?.hasPassword && (
+        <div style={{ margin: 'var(--space-md) 0', padding: '12px 16px', background: 'rgba(102, 252, 241, 0.1)', color: 'var(--text-primary)', border: '1px solid rgba(102, 252, 241, 0.3)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>💡 <strong>Google Account Linked:</strong> You can set an account password to log in with your email and password too.</span>
+          <Button size="sm" onClick={() => setIsPasswordModalOpen(true)}>Set Password</Button>
+        </div>
+      )}
+
+      <SetPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        isInitialSet={!user?.hasPassword}
+        onSuccess={(msg) => {
+          setPasswordSuccessMsg(msg);
+          setTimeout(() => setPasswordSuccessMsg(''), 5000);
+        }}
+      />
 
       {/* Status Alerts */}
       {message && <div className={styles.alertSuccess}>{message}</div>}

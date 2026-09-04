@@ -6,6 +6,7 @@ import Link from 'next/link';
 import api from '@/lib/api';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
+import { SetPasswordModal } from '@/components/ui/SetPasswordModal';
 import styles from './dashboard.module.css';
 
 interface Booking {
@@ -31,6 +32,8 @@ export default function CustomerDashboard() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordSuccessMsg, setPasswordSuccessMsg] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -42,11 +45,22 @@ export default function CustomerDashboard() {
       return;
     }
 
-    const fetchBookings = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const res = await api.get('/bookings/my-jobs');
-        const items = res.data?.data || res.data || [];
-        setBookings(Array.isArray(items) ? items : []);
+        const [profileRes, bookingsRes] = await Promise.allSettled([
+          api.get('/users/me'),
+          api.get('/bookings/my-jobs'),
+        ]);
+
+        if (profileRes.status === 'fulfilled' && profileRes.value?.data) {
+          const p = profileRes.value.data.data || profileRes.value.data;
+          setUser({ ...user, ...p });
+        }
+
+        if (bookingsRes.status === 'fulfilled' && bookingsRes.value?.data) {
+          const items = bookingsRes.value.data.data || bookingsRes.value.data || [];
+          setBookings(Array.isArray(items) ? items : []);
+        }
       } catch (err) {
         setBookings([]);
       } finally {
@@ -54,8 +68,8 @@ export default function CustomerDashboard() {
       }
     };
 
-    fetchBookings();
-  }, [user, router]);
+    fetchDashboardData();
+  }, [user?.role, router]);
 
   const handleSwitchToEngineer = async () => {
     try {
@@ -83,12 +97,38 @@ export default function CustomerDashboard() {
             <p>Manage your service requests and bookings.</p>
           </div>
           <div className={styles.headerActions}>
+            <Button onClick={() => setIsPasswordModalOpen(true)} variant="outline">
+              {user?.hasPassword ? '🔑 Change Password' : '🔑 Set Password'}
+            </Button>
             <Button onClick={handleSwitchToEngineer} variant="outline">🛠️ Engineer Mode</Button>
             <Button onClick={() => router.push('/')} variant="outline">Book New Service</Button>
             <Button onClick={handleLogout} variant="outline">Logout</Button>
           </div>
         </div>
       </header>
+
+      {passwordSuccessMsg && (
+        <div style={{ margin: 'var(--space-md) auto', maxWidth: '1200px', padding: '12px 16px', background: 'rgba(16, 185, 129, 0.1)', color: 'var(--success)', border: '1px solid var(--success)', borderRadius: 'var(--radius-md)' }}>
+          ✓ {passwordSuccessMsg}
+        </div>
+      )}
+
+      {!user?.hasPassword && (
+        <div style={{ margin: 'var(--space-md) auto', maxWidth: '1200px', padding: '12px 16px', background: 'rgba(102, 252, 241, 0.1)', color: 'var(--text-primary)', border: '1px solid rgba(102, 252, 241, 0.3)', borderRadius: 'var(--radius-md)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>💡 <strong>Google Account Linked:</strong> You can also set an account password to log in with your email and password.</span>
+          <Button size="sm" onClick={() => setIsPasswordModalOpen(true)}>Set Password</Button>
+        </div>
+      )}
+
+      <SetPasswordModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+        isInitialSet={!user?.hasPassword}
+        onSuccess={(msg) => {
+          setPasswordSuccessMsg(msg);
+          setTimeout(() => setPasswordSuccessMsg(''), 5000);
+        }}
+      />
 
       <main className={styles.main}>
         <h2>Your Bookings</h2>
