@@ -259,7 +259,7 @@ export default function EngineerDashboardPage() {
     setError('');
 
     try {
-      await api.post('/catalog/profile/skills', {
+      const res = await api.post('/catalog/profile/skills', {
         categoryId: selectedCategoryId,
         skillName: skillName.trim(),
         yearsOfExperience: years,
@@ -268,6 +268,16 @@ export default function EngineerDashboardPage() {
         experienceMonths: months,
         skillType: finalSkillType,
       });
+
+      const savedSkill = res.data;
+      if (savedSkill && profile) {
+        const existingList = profile.skills || [];
+        const filtered = existingList.filter((s: any) => s.id !== savedSkill.id);
+        setProfile({
+          ...profile,
+          skills: [savedSkill, ...filtered],
+        });
+      }
 
       const expLabel = [
         years > 0 ? `${years} yr${years > 1 ? 's' : ''}` : '',
@@ -294,6 +304,13 @@ export default function EngineerDashboardPage() {
       return;
     }
 
+    if (profile && profile.skills) {
+      setProfile({
+        ...profile,
+        skills: profile.skills.filter((s: any) => s.id !== skillId),
+      });
+    }
+
     try {
       await api.delete(`/catalog/profile/skills/${skillId}`);
       setMessage('✓ Skill removed from your profile.');
@@ -301,6 +318,7 @@ export default function EngineerDashboardPage() {
       fetchDashboardData();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to remove skill.');
+      fetchDashboardData();
     }
   };
 

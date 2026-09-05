@@ -91,9 +91,9 @@ function EngineerProfileContent() {
           <section className={`${styles.section} glass-panel`}>
             <h2>Skills & Expertise</h2>
             <div className={styles.skills}>
-              {engineer.skills.map((s, idx) => (
+              {engineer.skills.map((s: any, idx) => (
                 <span key={idx} className={styles.skillBadge}>
-                  {s.skill.name}
+                  {s.skillName || s.category?.name || s.skill?.name || 'Skill'}
                 </span>
               ))}
               {engineer.skills.length === 0 && <span className={styles.emptyText}>No skills listed</span>}
