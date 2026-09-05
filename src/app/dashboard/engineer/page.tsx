@@ -58,6 +58,12 @@ export default function EngineerDashboardPage() {
   const [lat, setLat] = useState<number | string>(18.5204);
   const [lng, setLng] = useState<number | string>(73.8567);
   const [radius, setRadius] = useState<number>(25);
+  const [address, setAddress] = useState<string>('');
+  const [placeQuery, setPlaceQuery] = useState<string>('');
+  const [placeSuggestions, setPlaceSuggestions] = useState<any[]>([]);
+  const [isSearchingPlace, setIsSearchingPlace] = useState<boolean>(false);
+  const [isResolvingAddress, setIsResolvingAddress] = useState<boolean>(false);
+  const [isDetectingLocation, setIsDetectingLocation] = useState<boolean>(false);
 
   // Skill Form States
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
@@ -110,9 +116,17 @@ export default function EngineerDashboardPage() {
         const p = profileRes.data.data || profileRes.data;
         setProfile(p);
         if (p.bio) setBio(p.bio);
-        if (p.lat) setLat(p.lat);
-        if (p.lng) setLng(p.lng);
-        if (p.availabilityRadius) setRadius(p.availabilityRadius);
+        const resolvedLat = p.homeLat ?? p.lat;
+        const resolvedLng = p.homeLng ?? p.lng;
+        if (resolvedLat !== null && resolvedLat !== undefined) setLat(Number(resolvedLat));
+        if (resolvedLng !== null && resolvedLng !== undefined) setLng(Number(resolvedLng));
+        if (p.serviceRadiusKm || p.availabilityRadius) setRadius(Number(p.serviceRadiusKm || p.availabilityRadius));
+        if (p.address || p.locationName) {
+          setAddress(p.address || p.locationName);
+          setPlaceQuery(p.address || p.locationName);
+        } else if (resolvedLat && resolvedLng) {
+          reverseGeocodeCoordinates(Number(resolvedLat), Number(resolvedLng));
+        }
       }
 
       // 2. Fetch Assigned Bookings / Inquiries
@@ -164,23 +178,116 @@ export default function EngineerDashboardPage() {
     }
   };
 
-  // Detect GPS coordinates
+  // Reverse geocode coordinates to human-readable location name
+  const reverseGeocodeCoordinates = async (latitude: number, longitude: number) => {
+    if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) return;
+    setIsResolvingAddress(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&zoom=14`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      if (!res.ok) throw new Error('Geocoding failed');
+      const data = await res.json();
+      const addr = data.address || {};
+      const parts = [
+        addr.suburb || addr.neighbourhood || addr.residential || addr.road,
+        addr.city || addr.town || addr.village || addr.county,
+        addr.state,
+        addr.country,
+      ].filter(Boolean);
+
+      const resolvedName = parts.length > 0 ? parts.join(', ') : data.display_name?.split(',').slice(0, 3).join(', ') || `${latitude}, ${longitude}`;
+      setAddress(resolvedName);
+      setPlaceQuery(resolvedName);
+      return resolvedName;
+    } catch (err) {
+      console.error('Reverse geocode error:', err);
+    } finally {
+      setIsResolvingAddress(false);
+    }
+  };
+
+  // Search for places / cities (Option to feed place)
+  const handleSearchPlace = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const query = placeQuery.trim();
+    if (!query) return;
+
+    setIsSearchingPlace(true);
+    setPlaceSuggestions([]);
+    setError('');
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      if (!res.ok) throw new Error('Failed to search location');
+      const results = await res.json();
+      if (Array.isArray(results) && results.length > 0) {
+        setPlaceSuggestions(results);
+      } else {
+        setPlaceSuggestions([]);
+        setError(`No locations found matching "${query}". Try searching with a city or locality name (e.g. Nagpur, Mumbai, Bangalore).`);
+        setTimeout(() => setError(''), 5000);
+      }
+    } catch (err: any) {
+      console.error('Search place error:', err);
+      setError('Unable to search location right now. Please enter coordinates or check connection.');
+      setTimeout(() => setError(''), 5000);
+    } finally {
+      setIsSearchingPlace(false);
+    }
+  };
+
+  // Select place from suggestions
+  const handleSelectPlace = (item: any) => {
+    const newLat = Number(parseFloat(item.lat).toFixed(6));
+    const newLng = Number(parseFloat(item.lon).toFixed(6));
+    setLat(newLat);
+    setLng(newLng);
+
+    const addr = item.address || {};
+    const parts = [
+      addr.suburb || addr.neighbourhood || addr.residential || addr.road,
+      addr.city || addr.town || addr.village || addr.county,
+      addr.state,
+      addr.country,
+    ].filter(Boolean);
+
+    const placeName = parts.length > 0 ? parts.join(', ') : item.display_name?.split(',').slice(0, 3).join(', ') || item.display_name;
+    setAddress(placeName);
+    setPlaceQuery(placeName);
+    setPlaceSuggestions([]);
+    setMessage(`📍 Location set to "${placeName}" (${newLat}, ${newLng})`);
+    setTimeout(() => setMessage(''), 4000);
+  };
+
+  // Detect GPS coordinates from device
   const handleDetectLocation = () => {
     if ('geolocation' in navigator) {
+      setIsDetectingLocation(true);
+      setMessage('🛰️ Acquiring GPS coordinates from your device...');
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setLat(Number(pos.coords.latitude.toFixed(6)));
-          setLng(Number(pos.coords.longitude.toFixed(6)));
-          setMessage('📍 Location detected successfully from your device!');
+        async (pos) => {
+          const newLat = Number(pos.coords.latitude.toFixed(6));
+          const newLng = Number(pos.coords.longitude.toFixed(6));
+          setLat(newLat);
+          setLng(newLng);
+          setIsDetectingLocation(false);
+          const resolved = await reverseGeocodeCoordinates(newLat, newLng);
+          setMessage(`📍 GPS detected: ${resolved || `${newLat}, ${newLng}`}`);
           setTimeout(() => setMessage(''), 4000);
         },
         (err) => {
-          setError('Unable to retrieve location. Please allow GPS permissions.');
-          setTimeout(() => setError(''), 4000);
-        }
+          setIsDetectingLocation(false);
+          setError('Unable to retrieve device location. Please allow GPS permissions or search for your place above.');
+          setTimeout(() => setError(''), 5000);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
       );
     } else {
-      setError('Geolocation is not supported by your browser.');
+      setError('Geolocation is not supported by your browser. Please search for your city above.');
     }
   };
 
@@ -193,11 +300,16 @@ export default function EngineerDashboardPage() {
     try {
       await api.put('/catalog/profile', {
         bio,
+        homeLat: Number(lat),
+        homeLng: Number(lng),
         lat: Number(lat),
         lng: Number(lng),
+        serviceRadiusKm: Number(radius),
         availabilityRadius: Number(radius),
+        address: address.trim() || undefined,
+        locationName: address.trim() || undefined,
       });
-      setMessage('✅ Profile & Service Radius updated successfully!');
+      setMessage('✅ Service Location, Address & Radius updated successfully!');
       setTimeout(() => setMessage(''), 4000);
       fetchDashboardData();
     } catch (err: any) {
@@ -603,33 +715,159 @@ export default function EngineerDashboardPage() {
         <section className={`${styles.panel} glass-panel`}>
           <h2>Service Location & Radius</h2>
           <p className={styles.panelSubtitle}>
-            Set your home base GPS coordinates and maximum travel distance to receive nearby customer jobs.
+            Configure your home base location and maximum travel distance to receive nearby customer jobs.
           </p>
 
-          <form onSubmit={handleSaveProfile}>
-            <div className={styles.formGrid}>
-              <Input
-                label="Latitude"
-                type="number"
-                step="any"
-                value={lat}
-                onChange={(e) => setLat(e.target.value)}
-                required
-              />
-              <Input
-                label="Longitude"
-                type="number"
-                step="any"
-                value={lng}
-                onChange={(e) => setLng(e.target.value)}
-                required
-              />
+          {/* Location Status Card */}
+          <div
+            style={{
+              padding: '1.1rem 1.25rem',
+              borderRadius: 'var(--radius-lg)',
+              background: 'linear-gradient(135deg, rgba(13, 148, 136, 0.08) 0%, rgba(20, 184, 166, 0.03) 100%)',
+              border: '1px solid rgba(13, 148, 136, 0.25)',
+              marginBottom: '1.75rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.5rem',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--accent-primary)' }}>
+                📍 Pinned Base Location
+              </span>
+              {isResolvingAddress && (
+                <span style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                  🔄 Resolving place name...
+                </span>
+              )}
             </div>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <Button type="button" variant="outline" onClick={handleDetectLocation}>
+            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: 'var(--text-primary)', wordBreak: 'break-word' }}>
+              {address || (isResolvingAddress ? 'Resolving location...' : 'Location not yet set. Search for your city/place below.')}
+            </div>
+
+            <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              <span>🌐 GPS: <strong>{lat}, {lng}</strong></span>
+              <span>📏 Service Radius: <strong>{radius} km</strong></span>
+            </div>
+          </div>
+
+          {/* Place Search (Option to Feed Place) */}
+          <div style={{ marginBottom: '2rem' }}>
+            <h3 style={{ fontSize: '1rem', marginBottom: '0.4rem' }}>Search & Set Place (City, Locality, or Area)</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+              Type any city, town, area, or landmark to automatically set your coordinates and location name.
+            </p>
+            <form onSubmit={handleSearchPlace} style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 280px' }}>
+                <Input
+                  label=""
+                  placeholder="e.g. Nagpur, Indiranagar Bangalore, Connaught Place Delhi"
+                  value={placeQuery}
+                  onChange={(e) => setPlaceQuery(e.target.value)}
+                  fullWidth
+                />
+              </div>
+              <Button type="submit" isLoading={isSearchingPlace}>
+                🔍 Search Place
+              </Button>
+              <Button type="button" variant="outline" onClick={handleDetectLocation} isLoading={isDetectingLocation}>
                 📍 Detect My Current Location
               </Button>
+            </form>
+
+            {/* Suggestions list */}
+            {placeSuggestions.length > 0 && (
+              <div
+                style={{
+                  marginTop: '0.75rem',
+                  padding: '0.75rem',
+                  background: 'var(--bg-secondary)',
+                  borderRadius: 'var(--radius-md)',
+                  border: '1px solid rgba(0, 0, 0, 0.1)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.5rem',
+                }}
+              >
+                <div style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  Click to select your exact location:
+                </div>
+                {placeSuggestions.map((item, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => handleSelectPlace(item)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '0.65rem 0.85rem',
+                      background: 'rgba(0,0,0,0.02)',
+                      border: '1px solid rgba(0,0,0,0.06)',
+                      borderRadius: 'var(--radius-sm)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.88rem',
+                      transition: 'background 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(13, 148, 136, 0.1)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(0,0,0,0.02)')}
+                  >
+                    <span>📍 {item.display_name}</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                      Select Place →
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <form onSubmit={handleSaveProfile}>
+            {/* Technical GPS Coordinates (Kept for Precision) */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                <h3 style={{ fontSize: '1rem', margin: 0 }}>GPS Coordinates (Latitude & Longitude)</h3>
+                <button
+                  type="button"
+                  onClick={() => reverseGeocodeCoordinates(Number(lat), Number(lng))}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--accent-primary)',
+                    cursor: 'pointer',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                  }}
+                >
+                  🔄 Resolve Location from Coordinates
+                </button>
+              </div>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '0.75rem' }}>
+                Coordinates stay automatically synchronized with your selected place, or you can fine-tune them directly.
+              </p>
+              <div className={styles.formGrid}>
+                <Input
+                  label="Latitude"
+                  type="number"
+                  step="any"
+                  value={lat}
+                  onChange={(e) => setLat(e.target.value)}
+                  required
+                />
+                <Input
+                  label="Longitude"
+                  type="number"
+                  step="any"
+                  value={lng}
+                  onChange={(e) => setLng(e.target.value)}
+                  required
+                />
+              </div>
             </div>
 
             <div className={styles.sliderGroup}>
@@ -646,11 +884,16 @@ export default function EngineerDashboardPage() {
                 onChange={(e) => setRadius(Number(e.target.value))}
                 className={styles.slider}
               />
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginTop: '6px' }}>
+                ⚡ You will be matched with customer jobs within {radius} km of <strong>{address || 'your pinned location'}</strong>.
+              </span>
             </div>
 
-            <Button type="submit" isLoading={isSaving}>
-              Save Service Location & Radius
-            </Button>
+            <div style={{ marginTop: '1.5rem' }}>
+              <Button type="submit" isLoading={isSaving}>
+                Save Service Location & Radius
+              </Button>
+            </div>
           </form>
         </section>
       )}

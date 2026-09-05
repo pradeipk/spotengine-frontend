@@ -74,7 +74,9 @@ function EngineerProfileContent() {
             <h1>{engineer.user.name}</h1>
             <div className={styles.statsRow}>
               <span className={styles.stat}>⭐ {Number(engineer.averageRating).toFixed(1)} / 5.0</span>
-              <span className={styles.stat}>📍 Serves up to {engineer.availabilityRadius}km</span>
+              <span className={styles.stat}>
+                📍 {(engineer as any).address ? `${(engineer as any).address.split(',')[0]} • ` : ''}Serves up to {engineer.availabilityRadius}km
+              </span>
             </div>
           </div>
         </div>

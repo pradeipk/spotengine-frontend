@@ -85,8 +85,13 @@ function SearchResultsContent() {
                 </div>
                 <div>
                   <h3>{engineer.user.name}</h3>
-                  <div className={styles.rating}>
-                    ⭐ {Number(engineer.averageRating).toFixed(1)} / 5.0
+                  <div className={styles.rating} style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <span>⭐ {Number(engineer.averageRating).toFixed(1)} / 5.0</span>
+                    {(engineer as any).address && (
+                      <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                        • 📍 {(engineer as any).address.split(',')[0]}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
