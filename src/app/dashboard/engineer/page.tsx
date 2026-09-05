@@ -64,6 +64,14 @@ export default function EngineerDashboardPage() {
   const [skillName, setSkillName] = useState('');
   const [experienceYears, setExperienceYears] = useState<number>(1);
   const [experienceMonths, setExperienceMonths] = useState<number>(0);
+  const [skillType, setSkillType] = useState<'primary' | 'secondary'>('primary');
+
+  // Auto-populate skillType as 'secondary' when experience is 0 yrs 0 mos
+  useEffect(() => {
+    if (experienceYears === 0 && experienceMonths === 0) {
+      setSkillType('secondary');
+    }
+  }, [experienceYears, experienceMonths]);
 
   // Status & Feedback
   const [isLoading, setIsLoading] = useState(true);
@@ -244,11 +252,7 @@ export default function EngineerDashboardPage() {
 
     const years = Math.max(0, Number(experienceYears) || 0);
     const months = Math.max(0, Number(experienceMonths) || 0);
-
-    if (years === 0 && months === 0) {
-      setError('Please enter at least 1 month of experience.');
-      return;
-    }
+    const finalSkillType = (years === 0 && months === 0) ? 'secondary' : skillType;
 
     setIsSaving(true);
     setMessage('');
@@ -262,17 +266,19 @@ export default function EngineerDashboardPage() {
         monthsOfExperience: months,
         experienceYears: years,
         experienceMonths: months,
+        skillType: finalSkillType,
       });
 
       const expLabel = [
         years > 0 ? `${years} yr${years > 1 ? 's' : ''}` : '',
         months > 0 ? `${months} mo${months > 1 ? 's' : ''}` : '',
-      ].filter(Boolean).join(' ');
+      ].filter(Boolean).join(' ') || '0 yrs 0 mos';
 
-      setMessage(`🛠️ Skill "${skillName}" (${expLabel}) added to your profile!`);
+      setMessage(`🛠️ ${finalSkillType === 'primary' ? '⭐ Primary' : 'Secondary'} Skill "${skillName}" (${expLabel}) added to your profile!`);
       setSkillName('');
       setExperienceYears(1);
       setExperienceMonths(0);
+      setSkillType('primary');
       setTimeout(() => setMessage(''), 4000);
       fetchDashboardData();
     } catch (err: any) {
@@ -712,6 +718,34 @@ export default function EngineerDashboardPage() {
               </span>
             </div>
 
+            <div className={styles.formGroup}>
+              <label>Skill Type</label>
+              <select
+                className={styles.textarea}
+                style={{ minHeight: '44px', padding: '8px' }}
+                value={skillType}
+                onChange={(e) => {
+                  if (experienceYears === 0 && experienceMonths === 0 && e.target.value === 'primary') {
+                    setError('0 years 0 months experience is only allowed as a Secondary skill.');
+                    return;
+                  }
+                  setSkillType(e.target.value as 'primary' | 'secondary');
+                }}
+              >
+                <option value="primary" disabled={experienceYears === 0 && experienceMonths === 0}>
+                  Primary Skill {experienceYears === 0 && experienceMonths === 0 ? '(Requires > 0 exp)' : ''}
+                </option>
+                <option value="secondary">
+                  Secondary Skill
+                </option>
+              </select>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginTop: '4px' }}>
+                {experienceYears === 0 && experienceMonths === 0
+                  ? '⚡ Auto-set to Secondary (0 yrs 0 mos experience)'
+                  : 'Select whether this is one of your core primary skills or a secondary skill'}
+              </span>
+            </div>
+
             <div style={{ display: 'flex', alignItems: 'flex-end' }}>
               <Button type="submit" isLoading={isSaving} fullWidth>
                 + Add Skill
@@ -741,6 +775,7 @@ export default function EngineerDashboardPage() {
                     yrs > 0 ? `${yrs} yr${yrs > 1 ? 's' : ''}` : '',
                     mos > 0 ? `${mos} mo${mos > 1 ? 's' : ''}` : '',
                   ].filter(Boolean).join(' ') || `${yrs} yrs`;
+                  const isPrimary = (s.skillType || 'primary').toLowerCase() === 'primary';
 
                   return (
                     <div
@@ -756,15 +791,32 @@ export default function EngineerDashboardPage() {
                       }}
                     >
                       <div>
-                        <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-                          {s.skillName || s.category?.name || 'Technical Skill'}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
+                            {s.skillName || s.category?.name || 'Technical Skill'}
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              padding: '2px 8px',
+                              borderRadius: 'var(--radius-full)',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.5px',
+                              background: isPrimary ? 'rgba(245, 158, 11, 0.15)' : 'rgba(100, 116, 139, 0.12)',
+                              color: isPrimary ? '#d97706' : '#64748b',
+                              border: `1px solid ${isPrimary ? 'rgba(245, 158, 11, 0.3)' : 'rgba(100, 116, 139, 0.25)'}`,
+                            }}
+                          >
+                            {isPrimary ? '⭐ Primary' : 'Secondary'}
+                          </span>
                         </div>
                         {s.skillName && s.category?.name && (
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
                             Category: {s.category.name}
                           </div>
                         )}
-                        <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', fontWeight: 600, marginTop: '2px' }}>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--accent-primary)', fontWeight: 600, marginTop: '3px' }}>
                           ⏱️ {expText} exp
                         </div>
                       </div>
